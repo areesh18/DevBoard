@@ -1,6 +1,8 @@
 package main
 
 import (
+	"html/template"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -16,8 +18,25 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	files := []string{
+		"./ui/html/base.layout.html",
+		"./ui/html/home.page.html",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.Write([]byte("DevBoard Home"))
+
 }
 func logList(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
