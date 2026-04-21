@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +32,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	
 
 }
 func (app *application) logList(w http.ResponseWriter, r *http.Request) {
@@ -42,13 +42,14 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	param := r.URL.Query().Get("tag")
-	if strings.TrimSpace(param) != "" {
-		w.Write([]byte("Logs tagged: " + param))
+	logs, err := app.logs.Latest()
+	if err != nil {
+		app.serverError(w, err)
 		return
 	}
-
-	w.Write([]byte("All Dev Logs"))
+	for _, l := range logs {
+		fmt.Fprintf(w, "%v\n", l)
+	}
 
 }
 
@@ -59,5 +60,12 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.Write([]byte("All Resources"))
+	resources, err := app.resources.Latest()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	for _, resource := range resources {
+		fmt.Fprintf(w, "%v\n", resource)
+	}
 }

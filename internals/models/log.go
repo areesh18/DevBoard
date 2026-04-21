@@ -17,14 +17,13 @@ type Log struct {
 type LogModel struct {
 	DB *sql.DB
 }
-
 func (m *LogModel) Get(id int) (*Log, error) {
 	stmt := `SELECT id, title, content, created, tag FROM devboard WHERE id = ?`
 
 	row := m.DB.QueryRow(stmt, id)
 
 	l := &Log{}
-	var ErrNoRecord = errors.New("models: no matching record found")
+	
 	err := row.Scan(&l.ID, &l.Title, &l.Content, &l.Created, &l.Tag)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

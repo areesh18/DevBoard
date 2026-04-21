@@ -7,12 +7,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/areesh18/devboard/internals/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	infoLog  *log.Logger
 	errorLog *log.Logger
+	logs     *models.LogModel
+	resources *models.ResourceModel
 }
 
 func main() {
@@ -32,6 +35,12 @@ func main() {
 	app := &application{
 		infoLog:  infoLog,
 		errorLog: errorLog,
+		logs: &models.LogModel{
+			DB: db,
+		},
+		resources: &models.ResourceModel{
+			DB: db,
+		},
 	}
 	srv := &http.Server{
 		Addr:     *addr,
