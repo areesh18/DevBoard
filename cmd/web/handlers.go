@@ -32,8 +32,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
-
 }
 func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -41,14 +39,27 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	
 	logs, err := app.logs.Latest()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	for _, l := range logs {
-		fmt.Fprintf(w, "%v\n", l)
+	files := []string{
+		"./ui/html/base.layout.html",
+		"./ui/html/logs.html",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	data:=&templateData{
+		Logs: logs,
+	}
+	err=ts.ExecuteTemplate(w,"base",data)
+	if err != nil {
+		app.serverError(w, err)
 	}
 
 }
