@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"runtime/debug"
 )
@@ -16,4 +17,20 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 }
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
+}
+func (app *application) render(w http.ResponseWriter, page string, data *templateData) {
+	files := []string{
+		"./ui/html/base.layout.html",
+		"./ui/html/" + page,
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }

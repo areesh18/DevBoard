@@ -1,7 +1,6 @@
 package main
 
 import (
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -19,20 +18,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/home.page.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.render(w, "home.page.html", nil)
 
 }
 func (app *application) logList(w http.ResponseWriter, r *http.Request) {
@@ -47,22 +33,10 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/logs.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
 	data := &templateData{
 		Logs: logs,
 	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "logs.html", data)
 
 }
 
@@ -80,19 +54,7 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 	data := &templateData{
 		Resources: resources,
 	}
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/resources.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "resources.html", data)
 
 }
 func (app *application) logView(w http.ResponseWriter, r *http.Request) {
@@ -109,52 +71,28 @@ func (app *application) logView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/log.page.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
 	data := &templateData{
 		Log: log,
 	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "log.page.html", data)
 
 }
 func (app *application) resourceView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err!=nil || id<1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
-	resource, err:=app.resources.Get(id)
-	if err==models.ErrNoRecord{
+	resource, err := app.resources.Get(id)
+	if err == models.ErrNoRecord {
 		app.notFound(w)
 		return
-	}else if err!=nil{
+	} else if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	data:=&templateData{
+	data := &templateData{
 		Resource: resource,
 	}
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/resource.page.html",
-	}
-	ts, err:=template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	err=ts.ExecuteTemplate(w,"base",data)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, "resource.page.html", data)
 }
