@@ -1,0 +1,20 @@
+{{define "main"}}
+{{with .Log}}
+<h1>{{.Title}}</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <td>{{.ID}}</td>
+    </tr>
+    <tr>
+        <th>Tag</th>
+        <td>{{.Tag}}</td>
+    </tr>
+    <tr>
+        <th>Created</th>
+        <td>{{.Created}}</td>
+    </tr>
+</table>
+<p>{{.Content}}</p>
+{{end}}
+{{end}}

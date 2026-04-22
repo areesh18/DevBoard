@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
+
+	"github.com/areesh18/devboard/internals/models"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +42,7 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	logs, err := app.logs.Latest()
 	if err != nil {
 		app.serverError(w, err)
@@ -54,10 +57,10 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	data:=&templateData{
+	data := &templateData{
 		Logs: logs,
 	}
-	err=ts.ExecuteTemplate(w,"base",data)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -79,4 +82,36 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 	for _, resource := range resources {
 		fmt.Fprintf(w, "%v\n", resource)
 	}
+}
+func (app *application) logView(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+	log, err := app.logs.Get(id)
+	if err == models.ErrNoRecord {
+		app.notFound(w)
+		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	files := []string{
+		"./ui/html/base.layout.html",
+		"./ui/html/log.page.html",
+	}
+	ts, err:=template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	data:=&templateData{
+		Log: log,
+	}
+	err=ts.ExecuteTemplate(w,"base",data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
 }

@@ -18,7 +18,7 @@ type LogModel struct {
 	DB *sql.DB
 }
 func (m *LogModel) Get(id int) (*Log, error) {
-	stmt := `SELECT id, title, content, created, tag FROM devboard WHERE id = ?`
+	stmt := `SELECT id, title, content, created, tag FROM logs WHERE id = ?`
 
 	row := m.DB.QueryRow(stmt, id)
 
