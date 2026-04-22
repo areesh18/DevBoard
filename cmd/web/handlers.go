@@ -12,21 +12,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
 	app.render(w, "home.page.html", nil)
 
 }
 func (app *application) logList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
 	logs, err := app.logs.Latest()
 	if err != nil {
 		app.serverError(w, err)
@@ -40,11 +29,7 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+	
 	resources, err := app.resources.Latest()
 	if err != nil {
 		app.serverError(w, err)
@@ -57,7 +42,7 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 
 }
 func (app *application) logView(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
@@ -77,7 +62,7 @@ func (app *application) logView(w http.ResponseWriter, r *http.Request) {
 
 }
 func (app *application) resourceView(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
