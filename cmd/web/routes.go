@@ -16,6 +16,8 @@ func (app *application) routes() http.Handler {
 	mux.Get("/resources", http.HandlerFunc(app.resourceList))
 	mux.Get("/log/create", http.HandlerFunc(app.logCreateForm))
 	mux.Post("/log/create", http.HandlerFunc(app.logCreatePost))
+	mux.Get("/resource/create", http.HandlerFunc(app.resourceCreateForm))
+	mux.Post("/resource/create", http.HandlerFunc(app.resourceCreatePost))
 	mux.Get("/log/:id", http.HandlerFunc(app.logView))
 	mux.Get("/resource/:id", http.HandlerFunc(app.resourceView))
 	fs := http.FileServer(http.Dir("./ui/static"))

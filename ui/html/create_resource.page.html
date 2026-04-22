@@ -1,0 +1,22 @@
+{{define "main"}}
+<h1>Add Resource</h1>
+<form action="/resource/create" method="POST">
+    <div>
+        <label>Title</label>
+        <input type="text" name="title">
+    </div>
+    <div>
+        <label>URL</label>
+        <input type="text" name="url">
+    </div>
+    <div>
+        <label>Tag</label>
+        <input type="text" name="tag">
+    </div>
+    <div>
+        <label>Note</label>
+        <textarea name="note"></textarea>
+    </div>
+    <button type="submit">Add Resource</button>
+</form>
+{{end}}

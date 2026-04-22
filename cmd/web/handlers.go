@@ -119,3 +119,38 @@ func (app *application) logCreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, fmt.Sprintf("/log/%d", id), http.StatusSeeOther)
 }
+func (app *application)resourceCreateForm(w http.ResponseWriter, r *http.Request){
+	app.render(w,"create_resource.page.html",nil)
+}
+func (app *application) resourceCreatePost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	title := r.PostForm.Get("title")
+	url := r.PostForm.Get("url")
+	tag := r.PostForm.Get("tag")
+	note := r.PostForm.Get("note")
+
+	errors := map[string]string{}
+	if strings.TrimSpace(title) == "" {
+		errors["title"] = "title cannot be empty"
+	} else if len(title) > 100 {
+		errors["title"] = "Title cannot be more than 100 characters"
+	}
+	if strings.TrimSpace(url) == "" {
+		errors["url"] = "URL cannot be empty"
+	}
+	if strings.TrimSpace(tag) == "" {
+		errors["tag"] = "Atleats one tag is required"
+	} else if len(tag) > 30 {
+		errors["tag"] = "tag cannot be more than 30 characters"
+	}
+	if len(errors) > 0 {
+		fmt.Fprint(w, errors)
+		return
+	}
+	id, err := app.resources.Insert(title, url, note, tag)
+	http.Redirect(w, r, fmt.Sprintf("/resource/%d", id), http.StatusSeeOther)
+}
