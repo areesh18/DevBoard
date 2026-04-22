@@ -27,7 +27,6 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-
 	logs, err := app.logs.Latest()
 	if err != nil {
 		app.serverError(w, err)
