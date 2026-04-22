@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/areesh18/devboard/internals/models"
 )
@@ -82,4 +84,38 @@ func (app *application) resourceView(w http.ResponseWriter, r *http.Request) {
 }
 func (app *application) logCreateForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, "create_log.page.html", nil)
+}
+func (app *application) logCreatePost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	tag := r.PostForm.Get("tag")
+
+	errors := map[string]string{}
+	if strings.TrimSpace(title) == "" {
+		errors["title"] = "title cannot be empty"
+	} else if len(title) > 100 {
+		errors["title"] = "Title cannot be more than 100 characters"
+	}
+
+	if strings.TrimSpace(content) == "" {
+		errors["content"] = "Content cannot be empty"
+	}
+	if len(tag) > 30 {
+		errors["tag"] = "Tag cannot be more than 30 characters"
+	}
+	if len(errors) > 0 {
+		fmt.Fprint(w, errors)
+		return
+	}
+	id, err := app.logs.Insert(title, content, tag)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/log/%d", id), http.StatusSeeOther)
 }
