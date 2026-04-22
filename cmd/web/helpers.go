@@ -19,11 +19,14 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 func (app *application) render(w http.ResponseWriter, page string, data *templateData) {
+	  funcMap := template.FuncMap{
+        "humanDate": humanDate,
+    }
 	files := []string{
 		"./ui/html/base.layout.html",
 		"./ui/html/" + page,
 	}
-	ts, err := template.ParseFiles(files...)
+	ts, err := template.New("").Funcs(funcMap).ParseFiles(files...)
 	if err != nil {
 		app.serverError(w, err)
 		return
