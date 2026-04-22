@@ -36,7 +36,7 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 	data := &templateData{
 		Logs: logs,
 	}
-	app.render(w, "logs.html", data)
+	app.render(w, "logs.page.html", data)
 
 }
 
@@ -54,7 +54,7 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 	data := &templateData{
 		Resources: resources,
 	}
-	app.render(w, "resources.html", data)
+	app.render(w, "resources.page.html", data)
 
 }
 func (app *application) logView(w http.ResponseWriter, r *http.Request) {

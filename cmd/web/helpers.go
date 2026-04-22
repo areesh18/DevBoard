@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"runtime/debug"
 )
@@ -19,20 +18,12 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 func (app *application) render(w http.ResponseWriter, page string, data *templateData) {
-	  funcMap := template.FuncMap{
-        "humanDate": humanDate,
-    }
-	files := []string{
-		"./ui/html/base.layout.html",
-		"./ui/html/" + page,
-	}
-	ts, err := template.New("").Funcs(funcMap).ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
+	ts, ok := app.templateCache[page]
+	if !ok {
+		app.serverError(w, fmt.Errorf("template %s not found", page))
 		return
 	}
-
-	err = ts.ExecuteTemplate(w, "base", data)
+	err := ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
