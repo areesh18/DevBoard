@@ -11,5 +11,5 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/resource", app.resourceView)
 	fs := http.FileServer(http.Dir("./ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
-	return mux
+	return secureHeaders(mux)
 }
