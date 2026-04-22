@@ -1,0 +1,21 @@
+{{define "main"}}
+    <h1>Resources</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Tag</th>
+            <th>Created</th>
+        </tr>
+        {{range .Resources}}
+        <tr>
+            <td>{{.ID}}</td>
+            <td>{{.Title}}</td>
+            <td>{{.URL}}</td>
+            <td>{{.Tag}}</td>
+            <td>{{.Created}}</td>
+        </tr>
+        {{end}}
+    </table>
+{{end}}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -73,15 +72,28 @@ func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	resources, err := app.resources.Latest()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	for _, resource := range resources {
-		fmt.Fprintf(w, "%v\n", resource)
+	data := &templateData{
+		Resources: resources,
 	}
+	files := []string{
+		"./ui/html/base.layout.html",
+		"./ui/html/resources.html",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
 }
 func (app *application) logView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -101,15 +113,15 @@ func (app *application) logView(w http.ResponseWriter, r *http.Request) {
 		"./ui/html/base.layout.html",
 		"./ui/html/log.page.html",
 	}
-	ts, err:=template.ParseFiles(files...)
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	data:=&templateData{
+	data := &templateData{
 		Log: log,
 	}
-	err=ts.ExecuteTemplate(w,"base",data)
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
