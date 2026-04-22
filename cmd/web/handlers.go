@@ -29,7 +29,7 @@ func (app *application) logList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) resourceList(w http.ResponseWriter, r *http.Request) {
-	
+
 	resources, err := app.resources.Latest()
 	if err != nil {
 		app.serverError(w, err)
@@ -79,4 +79,7 @@ func (app *application) resourceView(w http.ResponseWriter, r *http.Request) {
 		Resource: resource,
 	}
 	app.render(w, "resource.page.html", data)
+}
+func (app *application) logCreateForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, "create_log.page.html", nil)
 }

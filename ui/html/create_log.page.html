@@ -1,0 +1,18 @@
+{{define "main"}}
+<h1>Add Dev Log</h1>
+<form action="/log/create" method="POST">
+    <div>
+        <label>Title</label>
+        <input type="text" name="title">
+    </div>
+    <div>
+        <label>Content</label>
+        <textarea name="content"></textarea>
+    </div>
+    <div>
+        <label>Tag</label>
+        <input type="text" name="tag">
+    </div>
+    <button type="submit">Add Log</button>
+</form>
+{{end}}
